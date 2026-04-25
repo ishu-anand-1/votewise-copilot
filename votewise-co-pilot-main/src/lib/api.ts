@@ -12,7 +12,7 @@ const BASE_URL =
   import.meta.env
     .VITE_API_URL ||
 
-  "https://votewise-copilot.onrender.com";
+  "https://votewise-copilot.onrender.com/api";
 
 // ======================================================
 // TYPES
