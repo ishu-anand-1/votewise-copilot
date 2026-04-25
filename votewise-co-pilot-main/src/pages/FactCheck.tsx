@@ -7,6 +7,9 @@ import {
   ShieldQuestion,
   ShieldX,
   Loader2,
+  Brain,
+  Sparkles,
+  Shield,
 } from "lucide-react";
 
 import PageShell from "@/components/PageShell";
@@ -27,10 +30,18 @@ type Verdict =
   | "misleading"
   | "unverified";
 
+type Source =
+  | "rule_based"
+  | "ml_model"
+  | "gemini_ai"
+  | "fallback"
+  | "unknown";
+
 type FactResult = {
   verdict: Verdict;
   confidence: number;
   reason: string;
+  source?: Source;
 };
 
 // ======================================================
@@ -92,17 +103,55 @@ const config: Record<
 
 const samples = [
   {
-    en: "Forwarded: Every voter will get ₹2000 reward after voting!",
+    en: "Government secretly giving ₹5000 for votes",
 
-    hi: "फॉरवर्ड: हर वोटर को वोट देने के बाद ₹2000 मिलेंगे!",
+    hi: "सरकार वोट के बदले ₹5000 दे रही है",
   },
 
   {
-    en: "ECI launched a portal for voter ID verification.",
+    en: "Election Commission launched voter registration portal",
 
-    hi: "ECI ने वोटर ID जांचने के लिए पोर्टल लॉन्च किया।",
+    hi: "चुनाव आयोग ने वोटर पोर्टल लॉन्च किया",
+  },
+
+  {
+    en: "Secret online voting website launched",
+
+    hi: "गुप्त ऑनलाइन वोटिंग वेबसाइट लॉन्च हुई",
   },
 ];
+
+// ======================================================
+// SOURCE BADGE
+// ======================================================
+
+function getSourceInfo(source?: string) {
+  switch (source) {
+    case "ml_model":
+      return {
+        label: "🧠 ML Model",
+        icon: Brain,
+      };
+
+    case "rule_based":
+      return {
+        label: "🛡 Rule Engine",
+        icon: Shield,
+      };
+
+    case "gemini_ai":
+      return {
+        label: "✨ Google Gemini AI",
+        icon: Sparkles,
+      };
+
+    default:
+      return {
+        label: "Unknown Engine",
+        icon: ShieldQuestion,
+      };
+  }
+}
 
 // ======================================================
 // COMPONENT
@@ -111,13 +160,16 @@ const samples = [
 export default function FactCheck() {
   const { t, lang } = useI18n();
 
-  const [text, setText] = useState("");
+  const [text, setText] =
+    useState("");
 
   const [loading, setLoading] =
     useState(false);
 
   const [result, setResult] =
-    useState<FactResult | null>(null);
+    useState<FactResult | null>(
+      null
+    );
 
   // ======================================================
   // CHECK CLAIM
@@ -132,27 +184,45 @@ export default function FactCheck() {
 
     try {
       const response =
-        await factCheckAPI(text) as { result?: any };
+        await factCheckAPI(text) as any;
 
-     const parsed: FactResult =
-  typeof response?.result === "string"
-    ? JSON.parse(response.result)
-    : response?.result || {
-        verdict: "unverified",
-        confidence: 0,
-        reason: "No response returned",
-      };
+      const parsed =
+        typeof response?.result ===
+        "string"
+          ? JSON.parse(
+              response.result
+            )
+          : response?.result || {
+              verdict:
+                "unverified",
 
-setResult({
-  verdict: parsed.verdict || "unverified",
+              confidence: 0,
 
-  confidence:
-    Number(parsed.confidence) || 0,
+              reason:
+                "No response returned",
 
-  reason:
-    parsed.reason ||
-    "Unable to verify this claim.",
-});
+              source:
+                "unknown",
+            };
+
+      setResult({
+        verdict:
+          parsed.verdict ||
+          "unverified",
+
+        confidence:
+          Number(
+            parsed.confidence
+          ) || 0,
+
+        reason:
+          parsed.reason ||
+          "Unable to verify claim.",
+
+        source:
+          parsed.source ||
+          "unknown",
+      });
     } catch (error) {
       console.error(
         "Fact Check Error:",
@@ -160,12 +230,16 @@ setResult({
       );
 
       setResult({
-        verdict: "unverified",
+        verdict:
+          "unverified",
 
         confidence: 0,
 
         reason:
           "Unable to verify claim right now.",
+
+        source:
+          "unknown",
       });
     } finally {
       setLoading(false);
@@ -178,7 +252,6 @@ setResult({
 
   return (
     <PageShell>
-      {/* HEADER */}
 
       <SectionHeader
         eyebrow={
@@ -188,10 +261,9 @@ setResult({
         }
         title={t("fc_title")}
         subtitle={t("fc_sub")}
-        gradientTitle
       />
 
-      {/* INPUT CARD */}
+      {/* INPUT */}
 
       <motion.div
         initial={{
@@ -202,12 +274,19 @@ setResult({
           opacity: 1,
           y: 0,
         }}
-        className="glass-strong rounded-3xl p-5 gradient-border"
+        className="
+          glass-strong
+          rounded-3xl
+          p-5
+          gradient-border
+        "
       >
         <textarea
           value={text}
           onChange={(e) =>
-            setText(e.target.value)
+            setText(
+              e.target.value
+            )
           }
           placeholder={t("fc_paste")}
           className="
@@ -222,39 +301,42 @@ setResult({
             resize-none
             focus:outline-none
             focus:border-primary/50
-            placeholder:text-muted-foreground
           "
         />
 
-        {/* ACTIONS */}
+        {/* BUTTONS */}
 
-        <div className="mt-4 flex flex-wrap items-center gap-2">
+        <div className="mt-4 flex flex-wrap gap-2 items-center">
+
           <motion.button
             whileTap={{
-              scale: 0.96,
+              scale: 0.97,
             }}
             whileHover={{
               scale: 1.02,
             }}
-            onClick={checkClaim}
+            onClick={
+              checkClaim
+            }
             disabled={
-              !text.trim() || loading
+              loading ||
+              !text.trim()
             }
             className="
-              inline-flex
-              items-center
-              gap-2
               px-5
               py-2.5
               rounded-full
               bg-gradient-aurora
-              animate-aurora
               text-primary-foreground
               font-semibold
+              flex
+              items-center
+              gap-2
               shadow-glow
               disabled:opacity-50
             "
           >
+
             {loading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
@@ -262,63 +344,59 @@ setResult({
             )}
 
             {loading
-              ? lang === "hi"
-                ? "जांच हो रही है..."
-                : "Checking..."
+              ? "Checking..."
               : t("fc_check")}
           </motion.button>
 
-          {/* SAMPLE LABEL */}
-
           <span className="text-xs text-muted-foreground">
-            {lang === "hi"
-              ? "या उदाहरण आज़माएँ:"
-              : "Try sample claims:"}
+            Try sample claims:
           </span>
 
-          {/* SAMPLE BUTTONS */}
-
-          {samples.map((sample, i) => (
-            <button
-              key={i}
-              onClick={() =>
-                setText(sample[lang])
-              }
-              className="
-                chip
-                text-[11px]
-                hover:border-primary/40
-                transition
-              "
-            >
-              {sample[lang].slice(
-                0,
-                32
-              )}
-              ...
-            </button>
-          ))}
+          {samples.map(
+            (
+              sample,
+              i
+            ) => (
+              <button
+                key={i}
+                onClick={() =>
+                  setText(
+                    sample[
+                      lang
+                    ]
+                  )
+                }
+                className="chip text-xs"
+              >
+                {sample[
+                  lang
+                ].slice(
+                  0,
+                  28
+                )}
+                ...
+              </button>
+            )
+          )}
         </div>
       </motion.div>
 
       {/* RESULT */}
 
       <AnimatePresence>
+
         {result && (
           <motion.div
             initial={{
               opacity: 0,
-              y: 16,
-              scale: 0.98,
+              y: 10,
             }}
             animate={{
               opacity: 1,
               y: 0,
-              scale: 1,
             }}
             exit={{
               opacity: 0,
-              y: 16,
             }}
             className={`
               mt-6
@@ -328,13 +406,17 @@ setResult({
               ${config[result.verdict].color}
             `}
           >
-            <div className="flex items-start gap-4">
+
+            <div className="flex gap-4">
+
               {/* ICON */}
 
               {(() => {
+
                 const Icon =
                   config[
-                    result.verdict
+                    result
+                      .verdict
                   ].icon;
 
                 return (
@@ -345,35 +427,67 @@ setResult({
               {/* CONTENT */}
 
               <div className="flex-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="font-display text-xl font-bold">
+
+                <div className="flex flex-wrap gap-2 items-center">
+
+                  <h3 className="font-bold text-xl">
+
                     {
                       config[
-                        result.verdict
+                        result
+                          .verdict
                       ][lang]
                     }
+
                   </h3>
 
-                  <span className="chip text-[11px] border-current/30">
+                  <span className="chip text-xs">
+
                     {
                       result.confidence
                     }
-                    %{" "}
-                    {lang === "hi"
-                      ? "विश्वास"
-                      : "confidence"}
+                    % confidence
+
                   </span>
+
                 </div>
 
                 <p className="mt-3 text-sm leading-relaxed">
+
                   {result.reason}
+
                 </p>
+
+                {/* ENGINE */}
+
+                <div className="mt-4">
+
+                  <div className="text-xs opacity-70 mb-1">
+
+                    Detection Engine
+
+                  </div>
+
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-black/10 text-sm">
+
+                    {
+                      getSourceInfo(
+                        result.source
+                      ).label
+                    }
+
+                  </div>
+
+                </div>
+
               </div>
+
             </div>
 
             {/* CONFIDENCE BAR */}
 
-            <div className="mt-5 h-2 bg-black/20 rounded-full overflow-hidden">
+            <div className="mt-5 h-2 rounded-full overflow-hidden bg-black/20">
+
               <motion.div
                 initial={{
                   width: 0,
@@ -383,18 +497,25 @@ setResult({
                 }}
                 transition={{
                   duration: 0.8,
-                  ease: "easeOut",
                 }}
-                className="h-full bg-current opacity-70"
+                className="
+                  h-full
+                  bg-current
+                  opacity-70
+                "
               />
+
             </div>
+
           </motion.div>
         )}
+
       </AnimatePresence>
 
       {/* SUGGESTIONS */}
 
       <div className="mt-8">
+
         <SuggestionChips
           questions={suggestQuestions(
             "detector"
@@ -403,7 +524,9 @@ setResult({
             setText(q)
           }
         />
+
       </div>
+
     </PageShell>
   );
 }
