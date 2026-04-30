@@ -1,5 +1,24 @@
 # ml/train_model.py
+"""
+VoteWise AI
+Election Misinformation Detection Model
 
+This model classifies election-related
+claims as fake or real using
+TF-IDF vectorization and
+Logistic Regression.
+"""
+
+import pandas as pd
+import joblib
+from sklearn.pipeline import Pipeline
+from sklearn.feature_extraction.text import (
+    TfidfVectorizer,
+)
+
+from sklearn.linear_model import (
+    LogisticRegression,
+)
 import pandas as pd
 import joblib
 
@@ -214,6 +233,8 @@ model = LogisticRegression(
     max_iter=1000,
 
     solver="liblinear",
+
+    random_state=42,
 )
 
 model.fit(

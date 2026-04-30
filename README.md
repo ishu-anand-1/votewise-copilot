@@ -6,7 +6,7 @@ The idea for this project came from a simple problem: a lot of voters, especiall
 
 VoteWise AI tries to solve this by combining AI assistance, machine learning, and interactive voter education into one platform.
 
----
+
 
 # What the Project Does
 
@@ -19,7 +19,7 @@ VoteWise AI helps users:
 * prepare for election day
 * access information in multiple languages
 
----
+
 
 # Main Features
 
@@ -34,7 +34,7 @@ Users can ask questions such as:
 * What should I carry on election day?
 * How can I check if a political claim is fake?
 
----
+
 
 ## Fake News Detection System
 
@@ -45,6 +45,7 @@ The system uses a combination of:
 * rule-based verification
 * machine learning classification
 * Google Gemini AI verification
+
 
 to analyze election-related claims and provide a verdict.
 
@@ -245,3 +246,57 @@ Ishu Anand
 Full Stack & AI Developer
 
 Interested in building AI-powered applications, scalable backend systems, and technology-driven solutions for real-world problems.
+
+- deepfake detection
+- regional language expansion
+- election analytics
+
+## Google Services Integration
+
+VoteWise AI integrates Google Gemini AI for advanced election claim verification and contextual misinformation analysis.
+
+Google Gemini AI is used to:
+- verify election-related claims
+- analyze suspicious political statements
+- provide contextual AI-based fact verification
+- improve misinformation detection accuracy
+
+This integration strengthens the hybrid AI verification pipeline used in the platform.
+
+## Testing
+
+Basic API testing was implemented using FastAPI TestClient and pytest to validate core endpoints such as:
+
+- health routes
+- fact-check API
+- response validation
+
+## Security Practices
+
+- API keys stored securely using environment variables
+- backend-only AI integrations
+- protected sensitive credentials
+- separation between frontend and backend services
+
+## System Architecture
+
+The architecture of VoteWise AI is designed as a layered AI-driven system that combines frontend interaction, backend processing, machine learning pipelines, and AI verification services to provide intelligent election assistance and misinformation detection.
+
+### Architecture Overview
+
+- The frontend layer handles user interaction through features such as the AI chat assistant, fake news detector, multilingual support, and interactive voting simulations.
+
+- The FastAPI backend manages request routing, business logic, and communication between the frontend and AI/ML services.
+
+- The AI & ML intelligence layer combines:
+  - rule-based misinformation detection
+  - TF-IDF text vectorization
+  - Logistic Regression classification
+  - Google Gemini AI verification
+  - Groq-powered LLM assistance
+
+- MongoDB is used for storing user data, chat history, voting scenarios, and fact-check records.
+
+This layered architecture allows VoteWise AI to deliver scalable, intelligent, and real-time election guidance while maintaining modularity and extensibility for future AI improvements.
+(<architecture.png>)
+
