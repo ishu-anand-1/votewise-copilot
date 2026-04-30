@@ -1,3 +1,13 @@
+
+![Python](https://img.shields.io/badge/Python-FastAPI-blue)
+
+![React](https://img.shields.io/badge/Frontend-React-cyan)
+
+![AI](https://img.shields.io/badge/AI-Google_Gemini-purple)
+
+![ML](https://img.shields.io/badge/ML-Scikit_Learn-green)
+
+![Database](https://img.shields.io/badge/Database-MongoDB-darkgreen)
 # 🗳️ VoteWise AI
 
 VoteWise AI is a smart election assistant built to help people better understand the voting process, identify misinformation, and feel more confident while participating in elections.
@@ -223,11 +233,11 @@ uvicorn main:app --reload
 
 Frontend deployed on:
 
-* Vercel
+https://votewise-copilot.vercel.app/
 
 Backend deployed on:
 
-* Render
+https://votewise-copilot.onrender.com
 
 ---
 
@@ -247,9 +257,7 @@ Full Stack & AI Developer
 
 Interested in building AI-powered applications, scalable backend systems, and technology-driven solutions for real-world problems.
 
-- deepfake detection
-- regional language expansion
-- election analytics
+
 
 ## Google Services Integration
 
@@ -271,6 +279,19 @@ Basic API testing was implemented using FastAPI TestClient and pytest to validat
 - fact-check API
 - response validation
 
+## AI Verification Pipeline
+
+```text
+User Claim
+   ↓
+Rule-Based Verification
+   ↓
+Machine Learning Detection
+   ↓
+Google Gemini AI Verification
+   ↓
+Final Trust Verdict
+```
 ## Security Practices
 
 - API keys stored securely using environment variables
@@ -298,5 +319,18 @@ The architecture of VoteWise AI is designed as a layered AI-driven system that c
 - MongoDB is used for storing user data, chat history, voting scenarios, and fact-check records.
 
 This layered architecture allows VoteWise AI to deliver scalable, intelligent, and real-time election guidance while maintaining modularity and extensibility for future AI improvements.
-(<architecture.png>)
+![Votewise AI architecture](architecture.png)
 
+# Screenshots
+
+## Home Page
+
+![Home](home.png)
+
+## Fake News Detection
+
+![Fact Check](factcheck.png)
+
+## AI Voting Assistant
+
+![AI Assistant](assistant.png)
